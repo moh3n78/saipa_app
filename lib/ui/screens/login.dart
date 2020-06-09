@@ -229,11 +229,14 @@ class MyClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
+    path.lineTo(0, 0);
+    path.lineTo(10, 15);
     print('******************$size****************');
+    return path;
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }
 
 class LoginContainer extends StatelessWidget {
@@ -251,8 +254,8 @@ class LoginContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      child: ClipPath(
+    return ClipPath(
+      child: InkWell(
         child: Container(
           width: MediaQuery.of(context).size.width * 0.85,
           alignment: Alignment.center,
@@ -274,9 +277,8 @@ class LoginContainer extends StatelessWidget {
             ),
           ),
         ),
-        clipper: MyClipper(),
+        onTap: onTap,
       ),
-      onTap: onTap,
     );
   }
 }
