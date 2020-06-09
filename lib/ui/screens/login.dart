@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               Positioned(
                 top: MediaQuery.of(context).size.height * 0.15,
-                left: MediaQuery.of(context).size.height * 0.05,
+                left: MediaQuery.of(context).size.width * 0.05,
                 child: Container(
                   alignment: Alignment.center,
                   child: const Text(
@@ -142,9 +142,9 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             margin: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: Directionality(
+            child: const Directionality(
               textDirection: TextDirection.rtl,
-              child: TextField(
+              child: const TextField(
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'نام و نام خانوادگی',
@@ -160,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             margin: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: Directionality(
+            child: const Directionality(
               textDirection: TextDirection.rtl,
               child: TextField(
                 decoration: InputDecoration(
@@ -180,9 +180,9 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             margin: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: Directionality(
+            child: const Directionality(
               textDirection: TextDirection.rtl,
-              child: TextField(
+              child: const TextField(
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'کد ملی',
@@ -242,7 +242,12 @@ class LoginContainer extends StatelessWidget {
   final Color textColor;
   final Function onTap;
 
-  LoginContainer(this.text, this.containerColor, this.textColor, this.onTap);
+  const LoginContainer(
+    this.text,
+    this.containerColor,
+    this.textColor,
+    this.onTap,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +256,6 @@ class LoginContainer extends StatelessWidget {
         child: Container(
           width: MediaQuery.of(context).size.width * 0.85,
           alignment: Alignment.center,
-          // margin: const EdgeInsets.symmetric(horizontal: 25.0),
           padding: const EdgeInsets.symmetric(vertical: 13.0),
           decoration: BoxDecoration(
             color: containerColor,
