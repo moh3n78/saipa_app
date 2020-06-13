@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 
+import 'package:saipaapp/components/login_container.dart';
+import 'package:saipaapp/utilities/clippers.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool isLoginTapped = false;
-  bool isSignUpTapped = false;
-
   final TextEditingController _controller = TextEditingController();
+
+  bool _isLoginTapped = false;
+  bool _isSignUpTapped = false;
+
   String _errorText;
   String _enteredNumber;
 
@@ -24,36 +28,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // body: ClipPath(
-      //   child: Center(
-      //     child: Container(
-      //       height: 300,
-      //       width: 300,
-      //       decoration: BoxDecoration(
-      //         color: Colors.blueAccent.shade700,
-      //         borderRadius: BorderRadius.circular(15),
-      //       ),
-      //     ),
-      //   ),
-      //   clipper: MyClipper(),
-      // ),
-      // body: Center(
-      //   child: Container(
-      //     height: MediaQuery.of(context).size.height * 0.6,
-      //     width: MediaQuery.of(context).size.width * 0.8,
-      //     color: Colors.blueAccent.shade700,
-      //     child: CustomPaint(
-      //       foregroundPainter: MyCustomPainter(),
-      //     ),
-      //   ),
-      // ),
       body: WillPopScope(
-        onWillPop: (isLoginTapped || isSignUpTapped)
+        onWillPop: (_isLoginTapped || _isSignUpTapped)
             ? () async {
-                if (isLoginTapped)
-                  setState(() => isLoginTapped = !isLoginTapped);
+                if (_isLoginTapped)
+                  setState(() => _isLoginTapped = !_isLoginTapped);
                 else
-                  setState(() => isSignUpTapped = !isSignUpTapped);
+                  setState(() => _isSignUpTapped = !_isSignUpTapped);
               }
             : null,
         child: GestureDetector(
@@ -67,8 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
           },
           child: SafeArea(
             child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
+              decoration: const BoxDecoration(
+                gradient: const LinearGradient(
                   colors: <Color>[
                     Colors.black12,
                     Colors.white,
@@ -80,46 +61,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               child: Stack(
                 children: <Widget>[
-                  if (isLoginTapped || isSignUpTapped)
-                    Positioned(
-                      top: 10,
-                      height: 50,
-                      width: 50,
-                      child: Container(
-                        width: double.infinity,
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(top: 15, left: 10),
-                        child: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios),
-                          onPressed: () {
-                            if (isLoginTapped)
-                              setState(() => isLoginTapped = !isLoginTapped);
-                            else
-                              setState(() => isSignUpTapped = !isSignUpTapped);
-                          },
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  Positioned(
-                    top: MediaQuery.of(context).size.height * 0.15,
-                    left: MediaQuery.of(context).size.width * 0.05,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'گروه خودروسازی سایپا',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.deepOrange,
-                          fontSize: 35,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (isLoginTapped) loginMode(),
-                  if (isSignUpTapped) signupMode(),
-                  if (!isLoginTapped && !isSignUpTapped) notLogin(),
+                  _topText(),
+                  if (_isLoginTapped || _isSignUpTapped) _backButton(),
+                  if (!_isLoginTapped && !_isSignUpTapped) _initialMode(),
+                  if (_isLoginTapped) _loginMode(),
+                  if (_isSignUpTapped) _signupMode(),
                 ],
               ),
             ),
@@ -129,7 +75,84 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget loginMode() {
+  Widget _topText() {
+    return Positioned(
+      top: MediaQuery.of(context).size.height * 0.15,
+      left: MediaQuery.of(context).size.width * 0.001,
+      width: MediaQuery.of(context).size.width,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: const FittedBox(
+          alignment: Alignment.centerLeft,
+          fit: BoxFit.cover,
+          child: const Text(
+            'گروه خودروسازی سایپا',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.deepOrange,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _backButton() {
+    return Positioned(
+      top: 10,
+      height: 50,
+      width: 50,
+      child: Container(
+        width: double.infinity,
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(top: 15, left: 10),
+        child: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            if (_isLoginTapped)
+              setState(() => _isLoginTapped = !_isLoginTapped);
+            else
+              setState(() => _isSignUpTapped = !_isSignUpTapped);
+          },
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _initialMode() {
+    return Positioned(
+      top: MediaQuery.of(context).size.height * 0.15 +
+          MediaQuery.of(context).size.height * 0.25,
+      height: MediaQuery.of(context).size.height * 0.4,
+      left: (MediaQuery.of(context).size.width -
+              MediaQuery.of(context).size.width * 0.85) /
+          2,
+      // width: MediaQuery.of(context).size.width * 0.85,
+      child: Column(
+        children: <Widget>[
+          LoginContainer(
+            'ورود',
+            Colors.grey.shade600,
+            Colors.white,
+            () => setState(() => _isLoginTapped = !_isLoginTapped),
+            ClipMethods.loginTopLeftClip,
+          ),
+          const SizedBox(height: 15),
+          LoginContainer(
+            'ثبت نام',
+            Colors.cyan.shade400,
+            Colors.blueGrey,
+            () => setState(() => _isSignUpTapped = !_isSignUpTapped),
+            ClipMethods.loginTopLeftClip,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _loginMode() {
     return Positioned(
       top: MediaQuery.of(context).size.height * 0.18 +
           MediaQuery.of(context).size.height * 0.15,
@@ -184,13 +207,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 }
               }
             },
+            ClipMethods.loginTopLeftClip,
           ),
         ],
       ),
     );
   }
 
-  Widget signupMode() {
+  Widget _signupMode() {
     return Positioned(
       top: MediaQuery.of(context).size.height * 0.18 +
           MediaQuery.of(context).size.height * 0.15,
@@ -272,118 +296,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           const SizedBox(height: 25),
-          LoginContainer('ثبت نام در سایپا', Colors.grey, Colors.white, () {})
-        ],
-      ),
-    );
-  }
-
-  Widget notLogin() {
-    return Positioned(
-      top: MediaQuery.of(context).size.height * 0.4,
-      height: 250,
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        children: <Widget>[
           LoginContainer(
-            'ورود',
-            Colors.grey.shade600,
+            'ثبت نام در سایپا',
+            Colors.grey,
             Colors.white,
-            () => setState(() => isLoginTapped = !isLoginTapped),
-          ),
-          const SizedBox(height: 15),
-          LoginContainer(
-            'ثبت نام',
-            Colors.cyan.shade400,
-            Colors.blueGrey,
-            () => setState(() => isSignUpTapped = !isSignUpTapped),
+            () {},
+            ClipMethods.loginTopLeftClip,
           ),
         ],
       ),
     );
-  }
-}
-
-class LoginContainer extends StatelessWidget {
-  final String text;
-  final Color containerColor;
-  final Color textColor;
-  final Function onTap;
-
-  const LoginContainer(
-    this.text,
-    this.containerColor,
-    this.textColor,
-    this.onTap,
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipPath(
-      child: InkWell(
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.85,
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(vertical: 13.0),
-          decoration: BoxDecoration(
-            color: containerColor,
-            borderRadius: const BorderRadius.only(
-              topRight: const Radius.circular(15.0),
-              bottomRight: const Radius.circular(15.0),
-              bottomLeft: const Radius.circular(20.0),
-            ),
-          ),
-          child: Text(
-            text,
-            style: TextStyle(
-              color: textColor,
-              fontSize: 18,
-              fontWeight: FontWeight.w100,
-            ),
-          ),
-        ),
-        onTap: onTap,
-      ),
-      clipper: MyClipper(),
-    );
-  }
-}
-
-class MyClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.moveTo(25, 0);
-    path.lineTo(size.width, 0.0);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.lineTo(0, size.height / 3);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
-}
-
-class MyCustomPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color = Colors.red
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 8.0;
-    Path path = Path();
-    path.moveTo(50, size.height / 2);
-    path.lineTo(size.width, size.height / 2);
-    path.lineTo(size.width, size.height);
-    path.lineTo(size.width, 0.0);
-    canvas.drawPath(path, paint);
-    // path.close();
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
   }
 }
